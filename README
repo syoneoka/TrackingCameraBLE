@@ -1,0 +1,8 @@
+These examples were developed using node-v4.6.0 from nodejs.org.
+
+npm update should be run prior to running the examples in order to populate node_modules.
+
+The JavaScript library used requires a network connection to a Phidget Network Server.
+
+These examples are intended to be a basic introduction to using Phidgets with JavaScript
+and nodejs, and are best reviewed along side the Phidget API documentation.

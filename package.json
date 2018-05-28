@@ -1,0 +1,12 @@
+{
+  "name": "phidget22example",
+  "version": "2.0.0",
+  "description": "Phidget22 JavaScript Example",
+  "author": "Phidgets Inc.",
+  "license": "ISC",
+  "private": true,
+  "dependencies": {
+    "phidget22": "^2.0.7",
+    "prompt": "^1.0.0"
+  }
+}
