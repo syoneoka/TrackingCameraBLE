@@ -1,8 +1,9 @@
-These examples were developed using node-v4.6.0 from nodejs.org.
 
-npm update should be run prior to running the examples in order to populate node_modules.
+To Test BLE Only:
+1. Run command "node StepperBLE.js localhost" on Terminal
+2. Test connection using LightBlue
 
-The JavaScript library used requires a network connection to a Phidget Network Server.
-
-These examples are intended to be a basic introduction to using Phidgets with JavaScript
-and nodejs, and are best reviewed along side the Phidget API documentation.
+To Test BLE and Stepper:
+1. Comment out "// .then(runStepper)" in StepperBLE.js
+2. Start Phidget Control Panel.app and start network server under "Network Server" tab
+2. Run command "node StepperBLE.js localhost" on Terminal

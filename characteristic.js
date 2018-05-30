@@ -1,13 +1,17 @@
+// based on bleno example
+// https://github.com/noble/bleno/tree/master/examples/echo
+
 var util = require('util');
 
 var bleno = require('bleno');
 
 var BlenoCharacteristic = bleno.Characteristic;
 
-var EchoCharacteristic = function() {
-  EchoCharacteristic.super_.call(this, {
-    uuid: 'ec0e',
-    // properties: ['read', 'write', 'notify'],
+var characteristicUuids = '0C892821-EA17-4C9C-B0A9-80DA0F42284F';
+
+var ControlCharacteristic = function() {
+  ControlCharacteristic.super_.call(this, {
+    uuid: characteristicUuids,
     properties: ['write'],
     value: null
   });
@@ -17,46 +21,46 @@ var EchoCharacteristic = function() {
 };
 
 // define properties for motor control
-EchoCharacteristic.motorStepID = 0;
-EchoCharacteristic.motorStep = 0;
+ControlCharacteristic.motorStepID = 0;
+ControlCharacteristic.motorStep = 0;
 
-util.inherits(EchoCharacteristic, BlenoCharacteristic);
+util.inherits(ControlCharacteristic, BlenoCharacteristic);
 
-// EchoCharacteristic.prototype.onReadRequest = function(offset, callback) {
-//   console.log('EchoCharacteristic - onReadRequest: value = ' + this._value.toString('hex'));
+// ControlCharacteristic.prototype.onReadRequest = function(offset, callback) {
+//   console.log('ControlCharacteristic - onReadRequest: value = ' + this._value.toString('hex'));
 //
 //   callback(this.RESULT_SUCCESS, this._value);
 // };
 
-EchoCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+ControlCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
   this._value = data;
 
-  console.log('EchoCharacteristic - onWriteRequest: value = ' + this._value.toString('hex'));
+  console.log('ControlCharacteristic - onWriteRequest: value = ' + this._value.toString('hex'));
 
   if (this._updateValueCallback) {
-    console.log('EchoCharacteristic - onWriteRequest: notifying');
+    console.log('ControlCharacteristic - onWriteRequest: notifying');
 
     this._updateValueCallback(this._value);
   }
 
   // read buffer with big endian
-  EchoCharacteristic.motorStep = parseInt(this._value.toString('hex'),16);
-  EchoCharacteristic.motorStepID = EchoCharacteristic.motorStepID + 1;
+  ControlCharacteristic.motorStep = parseInt(this._value.toString('hex'),16);
+  ControlCharacteristic.motorStepID = ControlCharacteristic.motorStepID + 1;
 
   callback(this.RESULT_SUCCESS);
 };
 
-EchoCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
-  console.log('EchoCharacteristic - onSubscribe');
+ControlCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
+  console.log('ControlCharacteristic - onSubscribe');
 
   this._updateValueCallback = updateValueCallback;
 };
 
-EchoCharacteristic.prototype.onUnsubscribe = function() {
-  console.log('EchoCharacteristic - onUnsubscribe');
+ControlCharacteristic.prototype.onUnsubscribe = function() {
+  console.log('ControlCharacteristic - onUnsubscribe');
 
   this._updateValueCallback = null;
 };
 
 
-module.exports = EchoCharacteristic;
+module.exports = ControlCharacteristic;

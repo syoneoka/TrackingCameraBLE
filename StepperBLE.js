@@ -4,7 +4,10 @@ var phidget22 = require('phidget22');
 // load module for bluetooth
 var bleno = require('bleno');
 var BlenoPrimaryService = bleno.PrimaryService;
-var trackingCameraCharacteristic = require('./characteristic');
+var motorControlCharacteristic = require('./characteristic');
+
+// define UUID for control service
+var serviceUuids = '0C892820-EA17-4C9C-B0A9-80DA0F42284F';
 
 // setting for phidget
 var SERVER_PORT = 5661;
@@ -22,7 +25,8 @@ function main() {
 	var conn = new phidget22.Connection(SERVER_PORT, hostname, { name: 'Server Connection', passwd: '' });
 	conn.connect()
     .then(setupBLE)
-    .then(runStepper)
+// skip stepper motor actuation
+//    .then(runStepper)
 		.catch(function (err) {
 			console.error('Error running example:', err.message);
 			process.exit(1);
@@ -35,7 +39,7 @@ function setupBLE() {
     console.log('on -> stateChange: ' + state);
 
     if (state === 'poweredOn') {
-      bleno.startAdvertising('echo', ['ec00']);
+      bleno.startAdvertising('Control Service', [serviceUuids]);
     } else {
       bleno.stopAdvertising();
     }
@@ -47,9 +51,9 @@ function setupBLE() {
     if (!error) {
       bleno.setServices([
         new BlenoPrimaryService({
-          uuid: 'ec00',
+          uuid: serviceUuids,
           characteristics: [
-            new trackingCameraCharacteristic()
+            new motorControlCharacteristic()
           ]
         })
       ]);
@@ -69,17 +73,17 @@ function runStepper() {
   	function updatePosition() {
 
 			// for debugging
-			// console.log(trackingCameraCharacteristic.motorStepID);
-			// console.log(trackingCameraCharacteristic.motorStep);
+			// console.log(motorControlCharacteristic.motorStepID);
+			// console.log(motorControlCharacteristic.motorStep);
 
 			// compare new and old step
-			if (trackingCameraCharacteristic.motorStepID == previousStepID) {
+			if (motorControlCharacteristic.motorStepID == previousStepID) {
 				// do not do anything
 			} else {
 				// update previous step
-				previousStepID = trackingCameraCharacteristic.motorStepID;
+				previousStepID = motorControlCharacteristic.motorStepID;
 				// move motor
-				var newPosition = ch.getTargetPosition() + trackingCameraCharacteristic.motorStep;
+				var newPosition = ch.getTargetPosition() + motorControlCharacteristic.motorStep;
 				// newPosition = STEP;
 				console.log('\nSetting position to ' + newPosition + ' for 0.5 seconds...');
 				ch.setTargetPosition(newPosition);
@@ -105,9 +109,6 @@ function runStepper() {
   	});
 
 }
-
-
-
 
 // function runExample() {
 //
